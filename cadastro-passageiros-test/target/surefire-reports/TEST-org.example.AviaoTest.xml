@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.example.MainAppTest" time="0.034" tests="18" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.example.AviaoTest" time="0.02" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
     <property name="java.specification.version" value="11"/>
@@ -56,22 +56,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="55.0"/>
   </properties>
-  <testcase name="testCadastrarPassageiroComDadosValidos" classname="org.example.MainAppTest" time="0.009"/>
-  <testcase name="testCadastrarVooComDadosValidos" classname="org.example.MainAppTest" time="0.002"/>
-  <testcase name="testValidarEmailValido" classname="org.example.MainAppTest" time="0.002"/>
-  <testcase name="testCadastrarAviaoComCapacidadeNegativa" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testCadastrarAviaoComDadosValidos" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testCadastrarPassageiroComCpfInvalido" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testReservarPassagemDuplicada" classname="org.example.MainAppTest" time="0.001"/>
-  <testcase name="testListarAvioesAposDoisCadastros" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testValidarCpfInvalido" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testValidarEmailInvalido" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testListarReservasAposDoisRegistros" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testValidarCpfValido" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testCadastrarAviaoComCapacidadeZero" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testReservarPassagemComVagasDisponiveis" classname="org.example.MainAppTest" time="0"/>
-  <testcase name="testListarPassageirosAposTresCadastros" classname="org.example.MainAppTest" time="0.001"/>
-  <testcase name="testReservarPassagemSemVagasDisponiveis" classname="org.example.MainAppTest" time="0.001"/>
-  <testcase name="testCadastrarVooSemAviao" classname="org.example.MainAppTest" time="0.001"/>
-  <testcase name="testListarVoosAposUmCadastro" classname="org.example.MainAppTest" time="0.001"/>
+  <testcase name="testToString" classname="org.example.AviaoTest" time="0.007"/>
+  <testcase name="testValidarCapacidadeZero" classname="org.example.AviaoTest" time="0.002"/>
+  <testcase name="testGetters" classname="org.example.AviaoTest" time="0.001"/>
+  <testcase name="testCriacaoAviaoComValoresValidos" classname="org.example.AviaoTest" time="0.001"/>
+  <testcase name="testSetters" classname="org.example.AviaoTest" time="0.001"/>
+  <testcase name="testValidarCapacidadePositiva" classname="org.example.AviaoTest" time="0.001"/>
+  <testcase name="testValidarCapacidadeNegativa" classname="org.example.AviaoTest" time="0.002"/>
 </testsuite>

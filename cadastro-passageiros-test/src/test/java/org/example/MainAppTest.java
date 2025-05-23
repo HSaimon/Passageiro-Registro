@@ -3,95 +3,263 @@ package org.example;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MainAppTest {
-    // CPFs válidos gerados anteriormente para teste
-    private static final String VALID_CPF_1 = "53064171321";
-    private static final String VALID_CPF_2 = "18987384322";
-    private static final String VALID_CPF_3 = "03394014866";
-    private static final String VALID_CPF_4 = "03012661581"; // Outro CPF válido
-
+    
     @BeforeEach
     public void setUp() {
-        MainApp.limparPassageirosParaTeste();
+        MainApp.limparDadosParaTeste();
     }
-
+    
+    // Testes para Passageiros
     @Test
-    public void testAdicionarPassageiroComSucesso() {
-        Passageiro p1 = new Passageiro(1, "Joao Silva", VALID_CPF_1, "joao.silva@example.com");
-        Assertions.assertTrue(MainApp.adicionarPassageiroParaTeste(p1), "Deveria adicionar passageiro com dados válidos.");
+    public void testValidarCpfValido() {
+        Assertions.assertTrue(Passageiro.validarCpf("52998224725"), "CPF válido deve retornar true");
+    }
+    
+    @Test
+    public void testValidarCpfInvalido() {
+        Assertions.assertFalse(Passageiro.validarCpf("12345678900"), "CPF inválido deve retornar false");
+    }
+    
+    @Test
+    public void testValidarEmailValido() {
+        Assertions.assertTrue(Passageiro.validarEmail("ana.souza@email.com"), "Email válido deve retornar true");
+    }
+    
+    @Test
+    public void testValidarEmailInvalido() {
+        Assertions.assertFalse(Passageiro.validarEmail("ana.souza@com"), "Email inválido deve retornar false");
+    }
+    
+    @Test
+    public void testCadastrarPassageiroComDadosValidos() {
+        Passageiro p = new Passageiro(1, "Ana Silva", "52998224725", "ana.silva@email.com");
+        Assertions.assertTrue(MainApp.adicionarPassageiroParaTeste(p), "Deve adicionar passageiro com dados válidos");
+        
         List<Passageiro> passageiros = MainApp.getPassageiros();
-        Assertions.assertEquals(1, passageiros.size());
-        Assertions.assertEquals("Joao Silva", passageiros.get(0).getNome());
-        Assertions.assertEquals(VALID_CPF_1, passageiros.get(0).getCpf());
+        Assertions.assertEquals(1, passageiros.size(), "Lista deve conter 1 passageiro");
+        Assertions.assertEquals("Ana Silva", passageiros.get(0).getNome(), "Nome deve ser igual ao cadastrado");
     }
-
+    
     @Test
-    public void testNaoAdicionarPassageiroComCpfInvalido() {
-        Passageiro pInvalido = new Passageiro(2, "Maria CPF Invalido", "12345", "maria.invalida@example.com");
-        // O método adicionarPassageiroParaTeste deve usar Passageiro.validarCpf internamente
-        Assertions.assertFalse(MainApp.adicionarPassageiroParaTeste(pInvalido), "Não deveria adicionar passageiro com CPF inválido.");
-        Assertions.assertTrue(MainApp.getPassageiros().isEmpty(), "Lista deveria estar vazia após tentativa com CPF inválido.");
-    }
-
-    @Test
-    public void testNaoAdicionarPassageiroComEmailInvalido() {
-        Passageiro pInvalido = new Passageiro(3, "Pedro Email Invalido", VALID_CPF_2, "pedro.invalido");
-        // O método adicionarPassageiroParaTeste deve usar Passageiro.validarEmail internamente
-        Assertions.assertFalse(MainApp.adicionarPassageiroParaTeste(pInvalido), "Não deveria adicionar passageiro com e-mail inválido.");
-        Assertions.assertTrue(MainApp.getPassageiros().isEmpty(), "Lista deveria estar vazia após tentativa com e-mail inválido.");
-    }
-
-    @Test
-    public void testNaoAdicionarPassageiroComCpfDuplicado() {
-        Passageiro p1 = new Passageiro(1, "Carlos Primeiro", VALID_CPF_3, "carlos.primeiro@example.com");
-        Assertions.assertTrue(MainApp.adicionarPassageiroParaTeste(p1));
-
-        Passageiro p2Duplicado = new Passageiro(2, "Carlos Duplicado", VALID_CPF_3, "carlos.duplicado@example.com");
-        Assertions.assertFalse(MainApp.adicionarPassageiroParaTeste(p2Duplicado), "Não deveria adicionar passageiro com CPF duplicado.");
-        Assertions.assertEquals(1, MainApp.getPassageiros().size(), "Lista deveria conter apenas 1 passageiro após tentativa de duplicidade.");
-    }
-
-    @Test
-    public void testNaoAdicionarPassageiroComCpfDuplicadoFormatacaoDiferente() {
-        Passageiro p1 = new Passageiro(1, "Ana Original", VALID_CPF_4, "ana.original@example.com"); // CPF sem formatação
-        Assertions.assertTrue(MainApp.adicionarPassageiroParaTeste(p1));
-
-        // Mesmo CPF, mas com formatação
-        String cpfFormatado = VALID_CPF_4.substring(0,3) + "." + VALID_CPF_4.substring(3,6) + "." + VALID_CPF_4.substring(6,9) + "-" + VALID_CPF_4.substring(9,11);
-        Passageiro p2Duplicado = new Passageiro(2, "Ana Duplicada", cpfFormatado, "ana.duplicada@example.com");
-        Assertions.assertFalse(MainApp.adicionarPassageiroParaTeste(p2Duplicado), "Não deveria adicionar passageiro com CPF duplicado (formatação diferente).");
-        Assertions.assertEquals(1, MainApp.getPassageiros().size(), "Lista deveria conter apenas 1 passageiro.");
-    }
-
-    @Test
-    public void testListarPassageirosVazia() {
+    public void testCadastrarPassageiroComCpfInvalido() {
+        Passageiro p = new Passageiro(1, "Ana Silva", "12345678900", "ana.silva@email.com");
+        Assertions.assertFalse(MainApp.adicionarPassageiroParaTeste(p), "Não deve adicionar passageiro com CPF inválido");
+        
         List<Passageiro> passageiros = MainApp.getPassageiros();
-        Assertions.assertTrue(passageiros.isEmpty(), "Lista de passageiros deveria estar vazia inicialmente.");
+        Assertions.assertTrue(passageiros.isEmpty(), "Lista deve estar vazia");
     }
-
+    
+    // Testes para Aviões
     @Test
-    public void testListarPassageirosComAlgunsCadastrados() {
-        Passageiro p1 = new Passageiro(1, "Passageiro A", VALID_CPF_1, "pa@example.com");
-        Passageiro p2 = new Passageiro(2, "Passageiro B", VALID_CPF_2, "pb@example.com");
+    public void testCadastrarAviaoComDadosValidos() {
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        Assertions.assertTrue(MainApp.adicionarAviaoParaTeste(a), "Deve adicionar avião com dados válidos");
+        
+        List<Aviao> avioes = MainApp.getAvioes();
+        Assertions.assertEquals(1, avioes.size(), "Lista deve conter 1 avião");
+        Assertions.assertEquals("Boeing 737", avioes.get(0).getModelo(), "Modelo deve ser igual ao cadastrado");
+    }
+    
+    @Test
+    public void testCadastrarAviaoComCapacidadeZero() {
+        Aviao a = new Aviao(1, "Boeing 737", 0, "Boeing");
+        Assertions.assertFalse(MainApp.adicionarAviaoParaTeste(a), "Não deve adicionar avião com capacidade zero");
+        
+        List<Aviao> avioes = MainApp.getAvioes();
+        Assertions.assertTrue(avioes.isEmpty(), "Lista deve estar vazia");
+    }
+    
+    @Test
+    public void testCadastrarAviaoComCapacidadeNegativa() {
+        Aviao a = new Aviao(1, "Boeing 737", -10, "Boeing");
+        Assertions.assertFalse(MainApp.adicionarAviaoParaTeste(a), "Não deve adicionar avião com capacidade negativa");
+        
+        List<Aviao> avioes = MainApp.getAvioes();
+        Assertions.assertTrue(avioes.isEmpty(), "Lista deve estar vazia");
+    }
+    
+    // Testes para Voos
+    @Test
+    public void testCadastrarVooComDadosValidos() {
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        
+        Assertions.assertTrue(MainApp.adicionarVooParaTeste(v), "Deve adicionar voo com dados válidos");
+        
+        List<Voo> voos = MainApp.getVoos();
+        Assertions.assertEquals(1, voos.size(), "Lista deve conter 1 voo");
+        Assertions.assertEquals("São Paulo", voos.get(0).getOrigem(), "Origem deve ser igual à cadastrada");
+    }
+    
+    @Test
+    public void testCadastrarVooSemAviao() {
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, null);
+        
+        Assertions.assertFalse(MainApp.adicionarVooParaTeste(v), "Não deve adicionar voo sem avião associado");
+        
+        List<Voo> voos = MainApp.getVoos();
+        Assertions.assertTrue(voos.isEmpty(), "Lista deve estar vazia");
+    }
+    
+    // Testes para Reservas
+    @Test
+    public void testReservarPassagemComVagasDisponiveis() {
+        // Cadastrar passageiro
+        Passageiro p = new Passageiro(1, "Ana Silva", "52998224725", "ana.silva@email.com");
+        MainApp.adicionarPassageiroParaTeste(p);
+        
+        // Cadastrar avião
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        // Cadastrar voo
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        MainApp.adicionarVooParaTeste(v);
+        
+        // Fazer reserva
+        Reserva r = new Reserva(1, p, v, LocalDateTime.now());
+        
+        Assertions.assertTrue(MainApp.adicionarReservaParaTeste(r), "Deve adicionar reserva com vagas disponíveis");
+        
+        List<Reserva> reservas = MainApp.getReservas();
+        Assertions.assertEquals(1, reservas.size(), "Lista deve conter 1 reserva");
+    }
+    
+    @Test
+    public void testReservarPassagemSemVagasDisponiveis() {
+        // Cadastrar avião com capacidade 1
+        Aviao a = new Aviao(1, "Pequeno Avião", 1, "Fabricante");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        // Cadastrar voo
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        MainApp.adicionarVooParaTeste(v);
+        
+        // Cadastrar passageiros
+        Passageiro p1 = new Passageiro(1, "Ana Silva", "52998224725", "ana.silva@email.com");
+        Passageiro p2 = new Passageiro(2, "Carlos Souza", "18987384322", "carlos@email.com");
         MainApp.adicionarPassageiroParaTeste(p1);
         MainApp.adicionarPassageiroParaTeste(p2);
-
-        List<Passageiro> passageiros = MainApp.getPassageiros();
-        Assertions.assertEquals(2, passageiros.size());
-        Assertions.assertTrue(passageiros.contains(p1));
-        Assertions.assertTrue(passageiros.contains(p2));
+        
+        // Fazer primeira reserva (ocupa a única vaga)
+        Reserva r1 = new Reserva(1, p1, v, LocalDateTime.now());
+        MainApp.adicionarReservaParaTeste(r1);
+        
+        // Tentar fazer segunda reserva (não deve ser possível)
+        Reserva r2 = new Reserva(2, p2, v, LocalDateTime.now());
+        
+        Assertions.assertFalse(MainApp.adicionarReservaParaTeste(r2), "Não deve adicionar reserva sem vagas disponíveis");
+        
+        List<Reserva> reservas = MainApp.getReservas();
+        Assertions.assertEquals(1, reservas.size(), "Lista deve conter apenas 1 reserva");
     }
-
+    
     @Test
-    public void testLimparListaDePassageiros() {
-        Passageiro p1 = new Passageiro(1, "Passageiro Temp", VALID_CPF_3, "temp@example.com");
+    public void testReservarPassagemDuplicada() {
+        // Cadastrar passageiro
+        Passageiro p = new Passageiro(1, "Ana Silva", "52998224725", "ana.silva@email.com");
+        MainApp.adicionarPassageiroParaTeste(p);
+        
+        // Cadastrar avião
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        // Cadastrar voo
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        MainApp.adicionarVooParaTeste(v);
+        
+        // Fazer primeira reserva
+        Reserva r1 = new Reserva(1, p, v, LocalDateTime.now());
+        MainApp.adicionarReservaParaTeste(r1);
+        
+        // Tentar fazer reserva duplicada
+        Reserva r2 = new Reserva(2, p, v, LocalDateTime.now());
+        
+        Assertions.assertFalse(MainApp.adicionarReservaParaTeste(r2), "Não deve adicionar reserva duplicada");
+        
+        List<Reserva> reservas = MainApp.getReservas();
+        Assertions.assertEquals(1, reservas.size(), "Lista deve conter apenas 1 reserva");
+    }
+    
+    // Testes de Listagem
+    @Test
+    public void testListarPassageirosAposTresCadastros() {
+        Passageiro p1 = new Passageiro(1, "Ana Silva", "52998224725", "ana@email.com");
+        Passageiro p2 = new Passageiro(2, "Carlos Souza", "18987384322", "carlos@email.com");
+        Passageiro p3 = new Passageiro(3, "Maria Oliveira", "03394014866", "maria@email.com");
+        
         MainApp.adicionarPassageiroParaTeste(p1);
-        Assertions.assertFalse(MainApp.getPassageiros().isEmpty());
-
-        MainApp.limparPassageirosParaTeste();
-        Assertions.assertTrue(MainApp.getPassageiros().isEmpty(), "Lista deveria estar vazia após limpeza.");
+        MainApp.adicionarPassageiroParaTeste(p2);
+        MainApp.adicionarPassageiroParaTeste(p3);
+        
+        List<Passageiro> passageiros = MainApp.getPassageiros();
+        Assertions.assertEquals(3, passageiros.size(), "Lista deve conter 3 passageiros");
+    }
+    
+    @Test
+    public void testListarAvioesAposDoisCadastros() {
+        Aviao a1 = new Aviao(1, "Boeing 737", 150, "Boeing");
+        Aviao a2 = new Aviao(2, "Airbus A320", 180, "Airbus");
+        
+        MainApp.adicionarAviaoParaTeste(a1);
+        MainApp.adicionarAviaoParaTeste(a2);
+        
+        List<Aviao> avioes = MainApp.getAvioes();
+        Assertions.assertEquals(2, avioes.size(), "Lista deve conter 2 aviões");
+    }
+    
+    @Test
+    public void testListarVoosAposUmCadastro() {
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        MainApp.adicionarVooParaTeste(v);
+        
+        List<Voo> voos = MainApp.getVoos();
+        Assertions.assertEquals(1, voos.size(), "Lista deve conter 1 voo");
+        Assertions.assertNotNull(voos.get(0).getAviao(), "Voo deve ter avião associado");
+    }
+    
+    @Test
+    public void testListarReservasAposDoisRegistros() {
+        // Cadastrar passageiros
+        Passageiro p1 = new Passageiro(1, "Ana Silva", "52998224725", "ana@email.com");
+        Passageiro p2 = new Passageiro(2, "Carlos Souza", "18987384322", "carlos@email.com");
+        MainApp.adicionarPassageiroParaTeste(p1);
+        MainApp.adicionarPassageiroParaTeste(p2);
+        
+        // Cadastrar avião
+        Aviao a = new Aviao(1, "Boeing 737", 150, "Boeing");
+        MainApp.adicionarAviaoParaTeste(a);
+        
+        // Cadastrar voo
+        LocalDateTime dataHora = LocalDateTime.of(2025, 6, 15, 10, 30);
+        Voo v = new Voo(1, "São Paulo", "Rio de Janeiro", dataHora, a);
+        MainApp.adicionarVooParaTeste(v);
+        
+        // Fazer reservas
+        Reserva r1 = new Reserva(1, p1, v, LocalDateTime.now());
+        Reserva r2 = new Reserva(2, p2, v, LocalDateTime.now());
+        MainApp.adicionarReservaParaTeste(r1);
+        MainApp.adicionarReservaParaTeste(r2);
+        
+        List<Reserva> reservas = MainApp.getReservas();
+        Assertions.assertEquals(2, reservas.size(), "Lista deve conter 2 reservas");
+        Assertions.assertNotNull(reservas.get(0).getPassageiro(), "Reserva deve ter passageiro associado");
+        Assertions.assertNotNull(reservas.get(0).getVoo(), "Reserva deve ter voo associado");
     }
 }
-
